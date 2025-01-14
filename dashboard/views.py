@@ -77,8 +77,8 @@ def dashboard(request, file_path):
                'telegram', 'SocialMediaPlatforms', 'Premium']
 
     button_filters = {
-        'Summary': ['Property Name', 'Fixtures'],
-        'Enforcement_Sheet_Infringing': ['URL', 'Domain Name'],
+        'Summary': ['propertyname','fixtures','Startdate','Enddate'],
+        'Enforcement_Sheet_Infringing': ['propertyname', 'Domain Name'],
         'Enforcement_Sheet_Source': ['Source Type', 'Date'],
         'Telegram': ['Message Type', 'User ID'],
         'SocialMediaPlatforms': ['Platform', 'Engagement'],
