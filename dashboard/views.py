@@ -74,11 +74,11 @@ def dashboard(request, file_path):
     decoded_file_path = urllib.parse.unquote(file_path)
 
     buttons = ['Summary', 'Enforcement_Sheet_Infringing', 'Enforcement_Sheet_Source', 
-               'telegram', 'SocialMediaPlatforms', 'Premium']
+               'Telegram', 'SocialMediaPlatforms', 'Premium']
 
     button_filters = {
-        'Summary': ['propertyname','fixtures','Startdate','Enddate'],
-        'Enforcement_Sheet_Infringing': ['propertyname', 'Domain Name'],
+        'Summary': ['propertyname', 'fixtures', 'Identification Timestamp', 'Identification Timestamp'],
+        'Enforcement_Sheet_Infringing': ['propertyname', 'fixtures'],
         'Enforcement_Sheet_Source': ['Source Type', 'Date'],
         'Telegram': ['Message Type', 'User ID'],
         'SocialMediaPlatforms': ['Platform', 'Engagement'],
@@ -99,21 +99,36 @@ def dashboard(request, file_path):
 
     all_chunks = []
     for chunk in read_excel_in_chunks(decoded_file_path, sheet_name=selected_button if selected_button != 'Summary' else None, chunk_size=chunk_size):
-        for column, value in applied_filters.items():
-            if value:
-                if column in chunk.columns:
-                    chunk = chunk[chunk[column] == value]
         if not chunk.empty:
-            all_chunks.append(chunk)
+            # Populate unique values for filters
+            for column in button_filters.get(selected_button, []):
+                if column in chunk.columns:
+                    if column not in unique_values:
+                        unique_values[column] = set()
+                    unique_values[column].update(chunk[column].dropna().unique())
+
+            # Apply filters
+            for column, value in applied_filters.items():
+                if value and column in chunk.columns:
+                    chunk = chunk[chunk[column] == value]
+
+            if not chunk.empty:
+                all_chunks.append(chunk)
+
+    # Convert sets to lists for template rendering
+    unique_values = {key: list(value) for key, value in unique_values.items()}
 
     summary_data = pd.concat(all_chunks, ignore_index=True) if all_chunks else pd.DataFrame()
 
     if not summary_data.empty:
         if selected_button == 'Summary':
             widgets = {
-                'Total Sheets': len(sheet_names),
-                'Total Rows': len(summary_data),
-                'Total Columns': len(summary_data.columns),
+                'Total Properties':  summary_data['propertyname'].nunique(),
+                'Total Fixtures': summary_data['fixtures'].nunique(),
+                'Total Infringments' : summary_data['URL'].nunique(),
+                '% removal' : (summary_data.loc[summary_data['Status'].isin(['Approved', 'Removed']), 'URL'].nunique() / summary_data['URL'].nunique() * 100) if summary_data['URL'].nunique() > 0 else 0,
+
+                
             }
             graph = generate_graph(summary_data, 'propertyname', 'bar')
         elif selected_button == 'Enforcement_Sheet_Infringing':
@@ -157,4 +172,5 @@ def dashboard(request, file_path):
         'page_obj': page_obj,
         'widgets': widgets,
         'graph': graph,
+        
     })
