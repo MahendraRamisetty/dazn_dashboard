@@ -40,6 +40,10 @@ INSTALLED_APPS = [
     'dashboard',
 ]
 
+PDFKIT_CONFIG = {
+    'wkhtmltopdf': r'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe'
+}
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -48,6 +52,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.security.SecurityMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
 ]
 
 ROOT_URLCONF = 'dataviz.urls'
@@ -115,6 +121,14 @@ USE_L10N = True
 USE_TZ = True
 
 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'  # or your SMTP provider
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'your-email@gmail.com'
+EMAIL_HOST_PASSWORD = 'your-email-password'
+
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
@@ -122,3 +136,8 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     BASE_DIR / 'static',  # Assuming `static` folder exists in your project directory
 ]
+
+import os
+PDFKIT_CONFIG = {
+    'wkhtmltopdf': os.path.join('C:', os.sep, 'Program Files', 'wkhtmltopdf', 'bin', 'wkhtmltopdf.exe')
+}

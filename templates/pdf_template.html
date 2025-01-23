@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ selected_button }} Report</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        h1 { color: #007bff; }
+        .report-container { margin-top: 20px; }
+        .report-item { margin-bottom: 20px; }
+        .report-item img { width: 100%; max-width: 600px; }
+    </style>
+</head>
+<body>
+    <h1>{{ selected_button }} Report</h1>
+    <p>Start Date: {{ start_date }}</p>
+    <p>End Date: {{ end_date }}</p>
+    
+    <div class="report-container">
+        {% for graph in graphs %}
+        <div class="report-item">
+            <img src="{{ graph }}" alt="Graph">
+        </div>
+        {% endfor %}
+    </div>
+</body>
+</html>

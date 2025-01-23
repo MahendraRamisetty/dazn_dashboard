@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard Report</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        h2 { color: #007bff; }
+        .summary { margin-bottom: 20px; }
+        .graph { text-align: center; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h2>Dashboard Report</h2>
+    <p><strong>Report Type:</strong> {{ selected_button }}</p>
+    <p><strong>Date Range:</strong> {{ start_date }} to {{ end_date }}</p>
+
+    <div class="graph">
+        {% for graph in graphs %}
+            <img src="data:image/png;base64,{{ graph }}" width="500" />
+        {% endfor %}
+    </div>
+</body>
+</html>
